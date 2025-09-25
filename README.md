@@ -1,5 +1,10 @@
 # SAP Azure VM Configuration Generator
 
+![PowerShell](https://img.shields.io/badge/PowerShell-5.1%2B-blue)
+![Azure](https://img.shields.io/badge/Platform-Azure-blue)
+![SAP](https://img.shields.io/badge/SAP-HANA-orange)
+![Maintenance](https://img.shields.io/badge/Maintained-yes-green)
+
 ## Overview
 
 Advanced SAP Azure VM sizing framework that generates Microsoft-compliant configurations using official Azure SAP automation data. This tool provides intelligent sizing with dynamic fallback logic, Microsoft SAP HANA-compliant storage calculations, and comprehensive override capabilities for customized deployments.
