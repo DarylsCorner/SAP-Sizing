@@ -4,6 +4,8 @@
 ![Azure](https://img.shields.io/badge/Platform-Azure-blue)
 ![SAP](https://img.shields.io/badge/SAP-HANA-orange)
 ![Maintenance](https://img.shields.io/badge/Maintained-yes-green)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+![PRs](https://img.shields.io/badge/PRs-welcome-brightgreen)
 
 ## Overview
 
