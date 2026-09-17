@@ -6,6 +6,8 @@ Override columns allow you to customize specific configuration values in the gen
 ## Column Naming Convention
 All override columns use the format: `<section>_<property>_override`
 
+`ConfigKey` optionally sets the JSON key for a configuration. Use it to create separately named variants of the same `DB_SKU`, such as `M416ms_v2-so`.
+
 ## Compute Section Overrides
 
 | Column Name | Data Type | Example Values | Description |
@@ -14,6 +16,11 @@ All override columns use the format: `<section>_<property>_override`
 | `compute_accelerated_networking_override` | Boolean | `false` | Override accelerated networking (true/false) |
 
 ## Storage Section Overrides
+
+### Storage Exclusion
+| Column Name | Data Type | Example Values | Description |
+|-------------|-----------|----------------|-------------|
+| `storage_exclude_override` | String | `data;log;shared` | Removes the listed storage roles from the generated configuration. Separate names with semicolons or commas. |
 
 ### OS Disk
 | Column Name | Data Type | Example Values | Description |
@@ -71,6 +78,13 @@ All override columns use the format: `<section>_<property>_override`
 Moniker,DB_SKU,APP_SKU,ACS_SKU,Environment,storage_data_count_override,storage_data_size_gb_override,storage_backup_count_override,storage_backup_size_gb_override
 TestSystem,Standard_M96ds_2_v3,Standard_D4ds_v5,Standard_D2ds_v5,Development,4,512,1,1024
 ProdSystem,Standard_M416ds_8_v3,Standard_E8ds_v5,Standard_D4ds_v5,Production,,,2,
+```
+
+Scale-out variants can use a distinct key and omit database-specific disks:
+
+```csv
+Moniker,DB_SKU,APP_SKU,ACS_SKU,Environment,ConfigKey,storage_exclude_override
+M416ms_v2-so,Standard_M416ms_v2,Standard_E8ds_v5,Standard_E2ds_v5,Production,M416ms_v2-so,"data;log;shared"
 ```
 
 In this example:

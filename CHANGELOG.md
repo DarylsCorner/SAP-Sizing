@@ -1,5 +1,14 @@
 # Changelog - SAP Azure VM Sizing Framework
 
+## Unreleased
+
+### Customer Configuration Additions
+- Added exact memory mappings for additional Azure SAP VM SKUs used by custom generation.
+- Added `ConfigKey` support for separately named variants of the same Azure VM SKU.
+- Added `storage_exclude_override` support for omitting selected storage roles.
+- Added a focused customer additions CSV with scale-out variants that exclude data, log, and shared disks.
+- Documented manual merge guidance and confirmed that generated files under `outputs/` remain excluded from Git.
+
 ## Version 2.0 - Major Architectural Improvements (Current)
 
 ### 🚀 Unified Data Architecture

@@ -1,0 +1,12 @@
+Moniker,DB_SKU,APP_SKU,ACS_SKU,Environment,ConfigKey,storage_exclude_override
+M96ds_2_v3,Standard_M96ds_2_v3,Standard_E8ds_v5,Standard_E2ds_v5,Production,,
+M624ds_12_v3,Standard_M624ds_12_v3,Standard_E8ds_v5,Standard_E2ds_v5,Production,,
+M176ds_4_v3,Standard_M176ds_4_v3,Standard_E8ds_v5,Standard_E2ds_v5,Production,,
+M896ixds_32_v3,Standard_M896ixds_32_v3,Standard_E8ds_v5,Standard_E2ds_v5,Production,,
+M32ms_v2,Standard_M32ms_v2,Standard_E8ds_v5,Standard_E2ds_v5,Production,,
+M416s_8_v2,Standard_M416s_8_v2,Standard_E8ds_v5,Standard_E2ds_v5,Production,,
+M832ids_16_v3,Standard_M832ids_16_v3,Standard_E8ds_v5,Standard_E2ds_v5,Production,,
+M176bds_4_v3,Standard_M176bds_4_v3,Standard_E8ds_v5,Standard_E2ds_v5,Production,,
+E64ds_v5-so,Standard_E64ds_v5,Standard_E8ds_v5,Standard_E2ds_v5,Production,E64ds_v5-so,"data;log;shared"
+M416ds_8_v3-so,Standard_M416ds_8_v3,Standard_E8ds_v5,Standard_E2ds_v5,Production,M416ds_8_v3-so,"data;log;shared"
+M416ms_v2-so,Standard_M416ms_v2,Standard_E8ds_v5,Standard_E2ds_v5,Production,M416ms_v2-so,"data;log;shared"

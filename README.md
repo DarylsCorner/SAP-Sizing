@@ -65,6 +65,7 @@ All generated files are centrally located in the `outputs/` folder for easy acce
 - **CSV Files**: Human-readable system lists with memory, environment, and sizing details
 - **JSON Files**: Complete VM configurations including compute, storage, IOPS, and caching settings
 - **Override Support**: Custom mode files reflect any storage override configurations applied
+- **Repository Policy**: Generated files under `outputs/` are ignored by Git and should be distributed separately when needed
 
 ## 📁 File Structure
 
@@ -134,6 +135,26 @@ Customer-Test,Standard_E32ds_v5,Standard_E4ds_v5,Standard_E4ds_v5,Test
 
 **Template available**: Use `.\02-Create-VMConfig\Custom-Sizing.csv` as a starting point if custom configurations are needed.
 
+### Customer Additions and Variants
+
+Use `.\02-Create-VMConfig\Customer-SKU-Additions.csv` to generate the focused customer merge package:
+
+```powershell
+.\Generate-SAP-Configurations.ps1 -Mode Custom -CustomCSV ".\02-Create-VMConfig\Customer-SKU-Additions.csv"
+```
+
+This creates `.\outputs\Customer-SKU-Additions-VM-Configurations.json`. Customers can manually add the required component entries to an existing master without replacing customer-maintained configurations.
+
+Custom CSV files can also define separately named variants:
+
+```csv
+Moniker,DB_SKU,APP_SKU,ACS_SKU,Environment,ConfigKey,storage_exclude_override
+M416ms_v2-so,Standard_M416ms_v2,Standard_E8ds_v5,Standard_E2ds_v5,Production,M416ms_v2-so,"data;log;shared"
+```
+
+- `ConfigKey` sets the JSON key while preserving the actual Azure VM size in `compute.vm_size`.
+- `storage_exclude_override` removes named storage roles. The scale-out example retains only `os`, `sap`, and `backup`.
+
 ## 💡 Usage Examples
 
 ### Simple Commands (Three Main Scenarios)
@@ -168,6 +189,7 @@ Customer-Test,Standard_E32ds_v5,Standard_E4ds_v5,Standard_E4ds_v5,Test
 ### Custom Sizing Guide
 - **Detailed Instructions**: `.\reference\CUSTOM_SIZING_GUIDE.md`
 - **Example File**: `.\02-Create-VMConfig\Custom-Sizing.csv`
+- **Customer Additions Example**: `.\02-Create-VMConfig\Customer-SKU-Additions.csv`
 - **Override Support**: Storage-focused customization (data/backup disk count and sizing)
 - **Override Specification**: `.\reference\OVERRIDE_COLUMNS_SPECIFICATION.md`
 

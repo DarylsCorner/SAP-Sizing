@@ -104,6 +104,12 @@ function Set-StorageOverride {
         [string]$Value
     )
     
+    if ($Property.ToLower() -eq "exclude") {
+        $excludedStorage = @($Value -split '[,;]' | ForEach-Object { $_.Trim().ToLower() } | Where-Object { $_ })
+        $Config.storage = @($Config.storage | Where-Object { $_.name.ToLower() -notin $excludedStorage })
+        return "storage.exclude=$($excludedStorage -join ',')"
+    }
+
     # Parse storage property (e.g., "os_disk_type", "data_count", "log_size_gb")
     $storageParts = $Property -split '_', 2
     if ($storageParts.Count -lt 2) {
@@ -223,6 +229,7 @@ $vmMemoryDB = @{
     "Standard_M64ls" = 512
     "Standard_M64s" = 1024
     "Standard_M64ms" = 1792
+    "Standard_M32ms_v2" = 875
     "Standard_M96s_1_v3" = 974
     "Standard_M96ds_1_v3" = 974
     "Standard_M128s" = 2048
@@ -239,13 +246,17 @@ $vmMemoryDB = @{
     "Standard_M416ms_v2" = 11400
     "Standard_M416s_6_v3" = 5696
     "Standard_M416ds_6_v3" = 5696
+    "Standard_M416s_8_v2" = 7600
     "Standard_M416s_8_v3" = 7600
     "Standard_M416ds_8_v3" = 7600
+    "Standard_M624ds_12_v3" = 11400
+    "Standard_M832ids_16_v3" = 15200
     "Standard_M832is_v16_v3" = 15200
     "Standard_M832ids_v16_v3" = 15200
     "Standard_M896ixds_24_v3" = 23088
     "Standard_M896ixds_32_v3" = 30400
     "Standard_M1792ixds_32_v3" = 30400
+    "Standard_M176bds_4_v3" = 3892
     "Standard_E20ds_v4" = 160
     "Standard_E20ds_v5" = 160
     "Standard_E32ds_v4" = 256
@@ -259,6 +270,7 @@ $vmMemoryDB = @{
     # Additional exact memory values for common VMs
     "Standard_D2ds_v5" = 8
     "Standard_D4ds_v5" = 16
+    "Standard_E4ds_v5" = 32
     "Standard_E8ds_v5" = 64
     "Standard_E16ds_v5" = 128
     "Standard_M96ds_2_v3" = 1946
@@ -532,8 +544,13 @@ $masterConfig = [ordered]@{
     web = @{}
 }
 
-# Process each unique DB_SKU (preserve all columns including overrides)
-$uniqueSKUs = $systemsData | Sort-Object DB_SKU, Moniker | Group-Object DB_SKU | ForEach-Object { $_.Group | Select-Object -First 1 }
+# Process each unique output key, allowing separately named variants of one DB SKU.
+$uniqueSKUs = $systemsData | ForEach-Object {
+    $_ | Add-Member -NotePropertyName EffectiveConfigKey -NotePropertyValue $(
+        if ([string]::IsNullOrWhiteSpace($_.ConfigKey)) { $_.DB_SKU -replace "^Standard_", "" } else { $_.ConfigKey }
+    ) -Force
+    $_
+} | Sort-Object EffectiveConfigKey, Moniker | Group-Object EffectiveConfigKey | ForEach-Object { $_.Group | Select-Object -First 1 }
 
 Write-Host "Processing $($uniqueSKUs.Count) unique VM configurations..." -ForegroundColor Yellow
 
@@ -628,8 +645,8 @@ foreach ($system in $uniqueSKUs) {
             $vmConfig = Set-ConfigurationOverrides -BaseConfig $vmConfig -SystemRow $system -OverrideColumns $overrideColumns -SystemName $system.Moniker
         }
         
-        # Add to master configuration using VM SKU without "Standard_" prefix as key (matching reference format)
-        $vmKey = $system.DB_SKU -replace "^Standard_", ""
+        # Add to master using ConfigKey when supplied, otherwise the VM SKU without Standard_.
+        $vmKey = $system.EffectiveConfigKey
         $masterConfig.db[$vmKey] = $vmConfig
         
         # Create APP server configuration using APP_SKU

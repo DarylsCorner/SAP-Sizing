@@ -17,6 +17,13 @@ You can include override columns to customize specific configuration values:
 Moniker,DB_SKU,APP_SKU,ACS_SKU,Environment,storage_data_count_override,storage_data_size_gb_override,storage_backup_count_override,storage_backup_size_gb_override
 ```
 
+Use `ConfigKey` and `storage_exclude_override` for separately named variants:
+
+```csv
+Moniker,DB_SKU,APP_SKU,ACS_SKU,Environment,ConfigKey,storage_exclude_override
+M416ms_v2-so,Standard_M416ms_v2,Standard_E8ds_v5,Standard_E2ds_v5,Production,M416ms_v2-so,"data;log;shared"
+```
+
 ## Configuration Overrides
 
 The custom mode now supports **configuration overrides** that allow you to modify specific values while preserving standard configurations for everything else.
@@ -33,6 +40,9 @@ All override columns follow the pattern: `<section>_<property>_override`
 | `storage_log_count_override` | Number of log disks | `2` | Max: 2 disks |
 | `storage_backup_count_override` | Number of backup disks | `1`, `2`, `4` | Recommended: 4 |
 | `storage_backup_size_gb_override` | Individual backup disk size | `1024`, `2048`, `4096` | Based on data size |
+| `storage_exclude_override` | Storage roles to remove | `data;log;shared` | Semicolon- or comma-separated names |
+
+`ConfigKey` is not an override column. It optionally controls the key written under the JSON `db` section, allowing multiple variants to reference the same Azure `DB_SKU`.
 
 ### Override Benefits:
 - ✅ **Selective Customization**: Only override what you need to change
@@ -72,6 +82,19 @@ M832ixs_v2,Standard_M832ixs_v2,Standard_E16ds_v5,Standard_D4ds_v5,Development,,P
 - **APP_SKU**: Application server VM size (e.g., Standard_E16ds_v5)
 - **ACS_SKU**: SCS (Central Services) VM size (e.g., Standard_E8ds_v5)
 - **Environment**: Development, Test, or Production
+- **ConfigKey**: Optional output key for a separately named configuration variant
+
+## Customer Merge Packages
+
+The included `Customer-SKU-Additions.csv` is a focused input for generating entries that a customer can manually merge into an existing master:
+
+```powershell
+.\Generate-SAP-Configurations.ps1 -Mode Custom -CustomCSV ".\02-Create-VMConfig\Customer-SKU-Additions.csv"
+```
+
+The generated file is written to `.\outputs\Customer-SKU-Additions-VM-Configurations.json`. Copy only the required keys into the corresponding `db`, `app`, `scs`, or `scsha` sections. Do not replace the customer's complete master file, and review conflicts before replacing an existing key.
+
+Files under `outputs/` are generated artifacts and are intentionally excluded from Git.
 
 ## Supported VM SKUs
 
