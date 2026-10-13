@@ -148,13 +148,13 @@ function Set-StorageOverride {
             return "$storageType.caching"
         }
         "iops" {
-            if ($targetStorage.PSObject.Properties.Name -contains "disk_iops_read_write") {
+            if ($targetStorage.Contains("disk_iops_read_write")) {
                 $targetStorage.disk_iops_read_write = [int]$Value
                 return "$storageType.iops"
             }
         }
         "throughput" {
-            if ($targetStorage.PSObject.Properties.Name -contains "disk_mbps_read_write") {
+            if ($targetStorage.Contains("disk_mbps_read_write")) {
                 $targetStorage.disk_mbps_read_write = [int]$Value
                 return "$storageType.throughput"
             }
